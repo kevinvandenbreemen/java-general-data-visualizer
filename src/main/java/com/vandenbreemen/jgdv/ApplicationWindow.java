@@ -10,6 +10,8 @@ import java.awt.*;
  */
 public class ApplicationWindow extends JFrame {
 
+    private static final long LOGIC_LOOP_DELAY_MILLIS = 10;
+
     private Canvas canvas;
     private SystemPresenter presenter;
 
@@ -48,7 +50,7 @@ public class ApplicationWindow extends JFrame {
                 try {
                     do {
                         canvas.repaint();
-                        sleep(10);
+                        sleep(LOGIC_LOOP_DELAY_MILLIS);
                     } while (currentThread() == this);
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
