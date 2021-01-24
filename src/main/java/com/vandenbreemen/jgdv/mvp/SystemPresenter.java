@@ -1,7 +1,16 @@
 package com.vandenbreemen.jgdv.mvp;
 
-public class SystemPresenter {
+import com.vandenbreemen.jgdv.Canvas;
 
-    private SystemModel model;
+public class SystemPresenter<M extends SystemModel> {
 
+    private M model;
+
+    public SystemPresenter(M model) {
+        this.model = model;
+    }
+
+    public void initialize(Canvas canvas) {
+        canvas.setModel(this.model);
+    }
 }

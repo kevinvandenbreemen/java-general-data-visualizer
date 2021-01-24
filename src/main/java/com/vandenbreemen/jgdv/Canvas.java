@@ -1,5 +1,7 @@
 package com.vandenbreemen.jgdv;
 
+import com.vandenbreemen.jgdv.mvp.SystemModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -43,12 +45,17 @@ public class Canvas extends JPanel implements MouseListener {
 
     private Image offScreenImageDrawed = null;
     private Graphics offScreenGraphicsDrawed = null;
+    private SystemModel model;
 
     public Canvas(int width, int height) {
         this.setPreferredSize(new Dimension(width, height));
         this.setBackground(Color.white);
 
         addMouseListener(this);
+    }
+
+    public void setModel(SystemModel model) {
+        this.model = model;
     }
 
     @Override
@@ -67,8 +74,7 @@ public class Canvas extends JPanel implements MouseListener {
         offScreenGraphicsDrawed.setColor(Color.white);
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
 
-
-        renderOffScreen(offScreenImageDrawed.getGraphics());
+        renderOffScreen((Graphics2D)offScreenImageDrawed.getGraphics());
         g.drawImage(offScreenImageDrawed, 0, 0, null);
     }
 
@@ -76,12 +82,12 @@ public class Canvas extends JPanel implements MouseListener {
      * Render content proper
      * @param g
      */
-    public void renderOffScreen(final Graphics g) {
+    public void renderOffScreen(final Graphics2D g) {
         g.setColor(Color.black);
 
         final Dimension d = getSize();
 
-
+        model.render(g, d);
     }
 
 
