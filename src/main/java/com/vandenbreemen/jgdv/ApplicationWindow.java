@@ -1,9 +1,14 @@
 package com.vandenbreemen.jgdv;
 
+import com.vandenbreemen.jgdv.mvp.MenuItem;
 import com.vandenbreemen.jgdv.mvp.SystemPresenter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -15,6 +20,8 @@ public class ApplicationWindow extends JFrame {
     private Canvas canvas;
     private SystemPresenter presenter;
 
+    private List<MenuItem> fileMenuItems;
+
     /**
      * Actual loop of logic
      */
@@ -23,6 +30,7 @@ public class ApplicationWindow extends JFrame {
     public ApplicationWindow(SystemPresenter presenter, String title, int width, int height) {
         super(title);
         this.presenter = presenter;
+        this.fileMenuItems = new ArrayList<>();
         setBounds(20,20, width, height);
 
         canvas = new Canvas(width, height);
@@ -50,6 +58,7 @@ public class ApplicationWindow extends JFrame {
                 try {
                     do {
                         canvas.repaint();
+                        presenter.notifyObservers();
                         sleep(LOGIC_LOOP_DELAY_MILLIS);
                     } while (currentThread() == this);
                 } catch (InterruptedException interruptedException) {
@@ -58,6 +67,33 @@ public class ApplicationWindow extends JFrame {
             }
         };
         logicLoop.setPriority(Thread.NORM_PRIORITY + 1);    //  Slightly higher priority
+    }
+
+    private void updateMenu() {
+        JMenuBar bar = new JMenuBar();
+        if(!fileMenuItems.isEmpty()) {
+            JMenu fileMenu = new JMenu("FILE");
+            fileMenuItems.forEach(menuItem -> {
+                JMenuItem item = new JMenuItem(menuItem.getName());
+                item.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        menuItem.doAction();
+                    }
+                });
+                fileMenu.add(item);
+            });
+
+            bar.add(fileMenu);
+        }
+
+        setJMenuBar(bar);
+        invalidate();
+    }
+
+    public void addFileMenuItem(MenuItem item) {
+        fileMenuItems.add(item);
+        updateMenu();
     }
 
 }
